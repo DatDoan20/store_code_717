@@ -190,7 +190,6 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       localStream.getTracks().forEach(track => {
         track.stop();
         track.enabled = false;
-        console.log('190');
       });
       pc.current?.removeStream(localStream);
     }
@@ -198,7 +197,6 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       remoteStream.getTracks().forEach(track => {
         track.stop();
         track.enabled = false;
-        console.log('197');
       });
       pc.current?.removeStream(remoteStream);
     }
