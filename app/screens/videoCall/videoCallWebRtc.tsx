@@ -186,7 +186,6 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
   // Disconnecting the call -> close connection, release stream, delete document call
   const streamCleanUp = () => {
     if (localStream) {
-      localStream.getTracks()[0].stop();
       localStream.getTracks().forEach(track => {
         track.stop();
         track.enabled = false;
