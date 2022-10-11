@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "122628850719",
+    "firebase_url": "https://intern-react-native-project-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "intern-react-native-project",
+    "storage_bucket": "intern-react-native-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122628850719:android:ccffa83691305b5e71412a",
+        "android_client_info": {
+          "package_name": "com.internproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122628850719-hj8ol4csgk0uipu817e90onjfpv243fg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.internproject",
+            "certificate_hash": "6561be2988cad02fc2702d240268a6dcb6a2290e"
+          }
+        },
+        {
+          "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAtb0Sowj2Vj82kDhbrTXkiZ4TbnCCXAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "122628850719-0pdss5vkujii37borh6vo83a8d7gfiu7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.internproject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122628850719:android:5543320ef405526371412a",
+        "android_client_info": {
+          "package_name": "com.nichietsu.storecode717"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAtb0Sowj2Vj82kDhbrTXkiZ4TbnCCXAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "122628850719-0pdss5vkujii37borh6vo83a8d7gfiu7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.internproject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122628850719:android:90a444799b4b972b71412a",
+        "android_client_info": {
+          "package_name": "com.pizzaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAtb0Sowj2Vj82kDhbrTXkiZ4TbnCCXAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "122628850719-0pdss5vkujii37borh6vo83a8d7gfiu7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.internproject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
