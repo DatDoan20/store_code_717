@@ -1,14 +1,18 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {VideoCallScreenWebRtc} from '../../app/screens/videoCall';
-import {createNavigationContainerRef} from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { VideoCallScreenWebRtc } from '../../app/screens/videoCall';
+import { createNavigationContainerRef } from '@react-navigation/native';
+import LoginScreen from '../screens/login';
+import LoginSuccess from '../screens/loginSuccess';
 
 interface NavigationProps
-  extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
+  extends Partial<React.ComponentProps<typeof NavigationContainer>> { }
 
 export type NavigatorParamList = {
   videoCallWebRtc: undefined;
+  login: undefined
+  loginSuccess: undefined
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -21,7 +25,9 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="videoCallWebRtc">
+      initialRouteName="login">
+      <Stack.Screen name="login" component={LoginScreen} />
+      <Stack.Screen name='loginSuccess' component={LoginSuccess} />
       <Stack.Screen name="videoCallWebRtc" component={VideoCallScreenWebRtc} />
     </Stack.Navigator>
   );
