@@ -24,16 +24,17 @@ const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
 
 export const VideoCallScreenWebRtc: FC = (props: any) => {
   const data: VideoCall = props.route.params;
+  const pc = useRef<RTCPeerConnection | null>();
+  const connecting = useRef(false);
+  const namePeer = useRef<'caller' | 'callee' | null>(null);
+
   const [localStream, setLocalStream] = useState<MediaStream | null>();
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>();
   const [getIncomingCall, setGetIncomingCall] = useState<boolean>(
     data.type === TypeVideoCall.CALLEE ? true : false,
   );
-  const [acrossPeerHangup, setAcrossPeerHangup] = useState<boolean>(false);
+  const [acrossPeerHangup, SetAcrossPeerHangup] = useState<boolean>(false);
   const [acrossPeerHideCam, setAcrossPeerHideCam] = useState<boolean>(false);
-  const pc = useRef<RTCPeerConnection | null>();
-  const namePeer = useRef<'caller' | 'callee' | null>(null);
-  const connecting = useRef<boolean>(false);
 
   useEffect(() => {
     if (data.type === TypeVideoCall.CALLER) createCall();
@@ -62,7 +63,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            setAcrossPeerHangup(true);
+            SetAcrossPeerHangup(true);
           }
         });
       });
@@ -73,7 +74,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            setAcrossPeerHangup(true);
+            SetAcrossPeerHangup(true);
           }
         });
       });
@@ -95,7 +96,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     cRef.onSnapshot(snapshot => {
       const data = snapshot.data();
       const isHideCam = data?.[peerNeedListen]?.hideVideo;
-      if (isHideCam) setAcrossPeerHideCam(isHideCam);
+      if (isHideCam || isHideCam === false) setAcrossPeerHideCam(isHideCam);
     });
   };
 
@@ -130,14 +131,17 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     if (pc.current) {
       const offer = await pc.current.createOffer();
       pc.current.setLocalDescription(offer);
+
       const cWithOffer = {
         offer: {
           type: offer.type,
           sdp: offer.sdp,
         },
       };
+
       cRef.set(cWithOffer);
     }
+
     // Exchange the ice candidate between caller and callee (caller)
     collectIceCandidates(cRef, 'caller', 'callee');
     listenHideCam('callee');
@@ -149,6 +153,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     namePeer.current = 'callee';
 
     const cRef = firestore().collection('meet').doc('chatId');
+
     const offer = (await cRef.get()).data()?.offer;
     if (offer) {
       //Set up WebRtc
@@ -170,8 +175,8 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       // Gathering IceCandidates, this have to called after callee connect answer and offer (callee)
       collectIceCandidates(cRef, 'callee', 'caller');
     }
-    setGetIncomingCall(false);
     listenHideCam('caller');
+    setGetIncomingCall(false);
   };
 
   const hangup = () => {
@@ -181,16 +186,12 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     setRemoteStream(null);
     setLocalStream(null);
     setGetIncomingCall(false);
+    setAcrossPeerHideCam(false);
     console.log('clear');
     props.navigation.goBack();
   };
 
   // Helper function
-  const switchCamera = () => {
-    const track: any = localStream?.getVideoTracks()[0];
-    if (track) track._switchCamera();
-  };
-
   const sendHideCam = (isHideCam: boolean) => {
     if (namePeer.current) {
       const cRef = firestore().collection('meet').doc('chatId');
@@ -203,13 +204,18 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     }
   };
 
+  const switchCamera = () => {
+    const track: any = localStream?.getVideoTracks()[0];
+    if (track) track._switchCamera();
+  };
+
   const hideAndOpenCamera = () => {
     let isHideCam;
     localStream?.getVideoTracks().forEach((track: MediaStreamTrack) => {
       track.enabled = !track.enabled;
       isHideCam = !track.enabled;
     });
-    if (isHideCam) sendHideCam(isHideCam);
+    if (isHideCam || isHideCam === false) sendHideCam(isHideCam);
   };
 
   const muteAndUnmute = () => {
@@ -295,7 +301,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
         <RTCView
           style={styles.remoteStream}
           objectFit={'cover'}
-          streamURL={acrossPeerHideCam ? '' : remoteStream.toURL()}
+          streamURL={acrossPeerHideCam === true ? '' : remoteStream.toURL()}
         />
         <RTCView
           style={styles.localStream}
