@@ -3,12 +3,14 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {VideoCallScreenWebRtc} from '../../app/screens/videoCall';
 import {createNavigationContainerRef} from '@react-navigation/native';
+import {StartCallUserScreen} from '../screens/videoCall/startCallUser';
 
 interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export type NavigatorParamList = {
-  videoCallWebRtc: undefined;
+  StartCallUser: undefined;
+  VideoCallWebRtc: undefined;
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -21,8 +23,9 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="videoCallWebRtc">
-      <Stack.Screen name="videoCallWebRtc" component={VideoCallScreenWebRtc} />
+      initialRouteName="StartCallUser">
+      <Stack.Screen name="VideoCallWebRtc" component={VideoCallScreenWebRtc} />
+      <Stack.Screen name="StartCallUser" component={StartCallUserScreen} />
     </Stack.Navigator>
   );
 };

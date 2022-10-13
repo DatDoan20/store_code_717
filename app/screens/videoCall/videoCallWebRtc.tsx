@@ -13,40 +13,46 @@ import {
   EventOnCandidate,
   MediaStreamTrack,
 } from 'react-native-webrtc';
-import images from '../../../assets/images';
 import {customTheme} from '../../theme';
-import {getMediaStream} from '../../utils/stream';
+import Stream from '../../utils/stream';
 import {Calling} from './calling';
 import {ButtonVideo} from './components/buttonVideo';
 import {IncomingCall} from './incomingCall';
-// import { goBack } from "../../navigators"
+import {TypeVideoCall, VideoCall} from './startCallUser';
 
 const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
 
 export const VideoCallScreenWebRtc: FC = (props: any) => {
+  const data: VideoCall = props.route.params;
   const [localStream, setLocalStream] = useState<MediaStream | null>();
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>();
-  const [getIncomingCall, setGetIncomingCall] = useState<boolean>(false);
-  const [hideCam, setHideCam] = useState<boolean>(false);
+  const [getIncomingCall, setGetIncomingCall] = useState<boolean>(
+    data.type === TypeVideoCall.CALLEE ? true : false,
+  );
+  const [acrossPeerHangup, SetAcrossPeerHangup] = useState<boolean>(false);
+
   const pc = useRef<RTCPeerConnection | null>();
   const connecting = useRef(false);
-  // const flagHangup = useRef<boolean>(false)
 
   useEffect(() => {
+    if (data.type === TypeVideoCall.CALLER) createCall();
+
     const cRef = firestore().collection('meet').doc('chatId');
     const subscribeListenIncoming = cRef.onSnapshot(snapshot => {
       const data = snapshot.data();
 
       // Listen receive Answer
-      if (pc.current && !pc.current.remoteDescription && data && data.answer) {
+      if (!pc.current?.remoteDescription && data?.answer) {
         console.log('set remote');
-        pc.current.setRemoteDescription(new RTCSessionDescription(data.answer));
+        pc.current?.setRemoteDescription(
+          new RTCSessionDescription(data.answer),
+        );
       }
 
-      // Listen receive Offer (if there is offer for chatId -> receive incoming call)
-      if (data && data.offer && !connecting.current) {
-        setGetIncomingCall(true);
-      }
+      //Listen receive Offer (if there is offer for chatId -> receive incoming call)
+      // if (data?.offer && !connecting.current) {
+      //   setGetIncomingCall(true);
+      // }
     });
 
     // hangup when data callee was removed (caller/ callee was clicked hangup button when video call connected)
@@ -55,7 +61,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            hangup();
+            SetAcrossPeerHangup(true);
           }
         });
       });
@@ -66,7 +72,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            hangup();
+            SetAcrossPeerHangup(true);
           }
         });
       });
@@ -78,15 +84,20 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (acrossPeerHangup) hangup();
+  }, [acrossPeerHangup]);
+
+  // Main function
   const setUpWebRtc = async () => {
     pc.current = new RTCPeerConnection(configuration);
 
     // Get media stream for calling
-    const stream = await getMediaStream();
+    const stream = await Stream.getMediaStream();
     if (stream) {
       console.log('set local media stream');
-      setLocalStream(stream);
       pc.current.addStream(stream);
+      setLocalStream(stream);
     }
 
     // Get remote stream once it's available
@@ -94,6 +105,15 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       setRemoteStream(event.stream);
     };
   };
+
+  // const setUpDataChanel = () => {
+  //   const channel717 = pc.current?.createDataChannel('Channel717');
+  //   if (channel717) {
+  //     // pc.current?.onmessage = event => {
+  //     //   console.log(event.data);
+  //     // };
+  //   }
+  // };
 
   const createCall = async () => {
     console.log('Calling...');
@@ -157,23 +177,23 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     connecting.current = false;
     streamCleanUp();
     firestoreCleanUp();
-    setLocalStream(null);
     setRemoteStream(null);
+    setLocalStream(null);
     setGetIncomingCall(false);
     console.log('clear');
+    props.navigation.pop();
   };
 
+  // Helper function
   const switchCamera = () => {
-    localStream?.getVideoTracks().forEach((track: any) => {
-      track._switchCamera();
-    });
+    const track: any = localStream?.getVideoTracks()[0];
+    if (track) track._switchCamera();
   };
 
   const hideAndOpenCamera = () => {
     localStream?.getVideoTracks().forEach((track: MediaStreamTrack) => {
       track.enabled = !track.enabled;
     });
-    // setHideCam(!localStream.getVideoTracks()[0].enabled)
   };
 
   const muteAndUnmute = () => {
@@ -182,25 +202,18 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     });
   };
 
-  // Helper function
-  // Disconnecting the call -> close connection, release stream, delete document call
   const streamCleanUp = () => {
     if (localStream) {
-      localStream.getTracks().forEach(track => {
-        track.stop();
-        track.enabled = false;
+      localStream.getTracks().forEach(t => {
+        t.stop();
       });
-      pc.current?.removeStream(localStream);
+      localStream.release();
     }
-    if (remoteStream) {
-      remoteStream.getTracks().forEach(track => {
-        track.stop();
-        track.enabled = false;
-      });
-      pc.current?.removeStream(remoteStream);
+    if (pc.current) {
+      (pc.current as any)._unregisterEvents();
+      pc.current.close();
+      pc.current = null;
     }
-    pc.current?.close();
-    pc.current = null;
   };
 
   const firestoreCleanUp = async () => {
@@ -236,10 +249,14 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
 
     // Get ICE candidate added to firestore and update the local pc
     cRef.collection(remoteName).onSnapshot(snapshot => {
-      snapshot.docChanges().forEach((change: any) => {
+      snapshot.docChanges().forEach(async (change: any) => {
         if (change.type === 'added') {
           const candidate = new RTCIceCandidate(change.doc.data());
-          pc.current?.addIceCandidate(candidate);
+          try {
+            await pc.current?.addIceCandidate(candidate);
+          } catch (error) {
+            console.log('error addIceCandidate: ', error);
+          }
         }
       });
     });
@@ -273,22 +290,26 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
           <ButtonVideo
             callback={hideAndOpenCamera}
             text={'Ẩn camera'}
-            img={images.hideCamera}
+            // img={images.hideCamera}
             btnStyle={styles.blue}
           />
           <ButtonVideo
             callback={muteAndUnmute}
             text={'Tắt âm'}
-            img={images.mute}
+            // img={images.mute}
             btnStyle={styles.blue}
           />
           <ButtonVideo
             callback={switchCamera}
             text={'Đổi camera'}
-            img={images.switchCamera}
+            // img={images.switchCamera}
             btnStyle={styles.blue}
           />
-          <ButtonVideo callback={hangup} text={'Huỷ'} img={images.close} />
+          <ButtonVideo
+            callback={hangup}
+            text={'Huỷ'}
+            // img={images.close}
+          />
         </View>
       </View>
     );
@@ -297,8 +318,8 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
   // Err or not get local stream yet
   return (
     <View style={styles.root}>
-      <TouchableOpacity onPress={createCall} style={styles.btnStartMakeCall}>
-        <Text style={styles.textErr}>📞 Start Call Video Web Rtc</Text>
+      <TouchableOpacity onPress={() => {}} style={styles.btnStartMakeCall}>
+        <Text style={styles.textErr}>show video</Text>
       </TouchableOpacity>
     </View>
   );
