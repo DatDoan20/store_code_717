@@ -8,6 +8,9 @@ const LoginSuccess = (props: loginSuccessProps) => {
   const { navigation, route } = props
   const curUser = auth().currentUser
 
+  console.log("curUser", curUser);
+
+
   const logoutHandle = () => {
     auth().signOut().then(() => navigation.replace('login'))
   }
