@@ -27,7 +27,7 @@ export default class Stream {
           ],
         },
       });
-      console.log('get local stream:', stream);
+      // console.log('get local stream:', stream);
       return stream;
     } catch (e) {
       console.log('get local stream error:', e);

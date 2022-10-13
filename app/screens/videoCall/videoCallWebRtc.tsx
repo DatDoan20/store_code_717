@@ -29,10 +29,11 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
   const [getIncomingCall, setGetIncomingCall] = useState<boolean>(
     data.type === TypeVideoCall.CALLEE ? true : false,
   );
-  const [acrossPeerHangup, SetAcrossPeerHangup] = useState<boolean>(false);
-
+  const [acrossPeerHangup, setAcrossPeerHangup] = useState<boolean>(false);
+  const [acrossPeerHideCam, setAcrossPeerHideCam] = useState<boolean>(false);
   const pc = useRef<RTCPeerConnection | null>();
-  const connecting = useRef(false);
+  const namePeer = useRef<'caller' | 'callee' | null>(null);
+  const connecting = useRef<boolean>(false);
 
   useEffect(() => {
     if (data.type === TypeVideoCall.CALLER) createCall();
@@ -61,7 +62,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            SetAcrossPeerHangup(true);
+            setAcrossPeerHangup(true);
           }
         });
       });
@@ -72,7 +73,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       .onSnapshot(snapshot => {
         snapshot.docChanges().forEach(change => {
           if (change.type === 'removed') {
-            SetAcrossPeerHangup(true);
+            setAcrossPeerHangup(true);
           }
         });
       });
@@ -89,6 +90,15 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
   }, [acrossPeerHangup]);
 
   // Main function
+  const listenHideCam = (peerNeedListen: string) => {
+    const cRef = firestore().collection('meet').doc('chatId');
+    cRef.onSnapshot(snapshot => {
+      const data = snapshot.data();
+      const isHideCam = data?.[peerNeedListen]?.hideVideo;
+      if (isHideCam) setAcrossPeerHideCam(isHideCam);
+    });
+  };
+
   const setUpWebRtc = async () => {
     pc.current = new RTCPeerConnection(configuration);
 
@@ -106,18 +116,10 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     };
   };
 
-  // const setUpDataChanel = () => {
-  //   const channel717 = pc.current?.createDataChannel('Channel717');
-  //   if (channel717) {
-  //     // pc.current?.onmessage = event => {
-  //     //   console.log(event.data);
-  //     // };
-  //   }
-  // };
-
   const createCall = async () => {
     console.log('Calling...');
     connecting.current = true;
+    namePeer.current = 'caller';
 
     //Set up WebRtc
     await setUpWebRtc();
@@ -128,24 +130,23 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     if (pc.current) {
       const offer = await pc.current.createOffer();
       pc.current.setLocalDescription(offer);
-
       const cWithOffer = {
         offer: {
           type: offer.type,
           sdp: offer.sdp,
         },
       };
-
       cRef.set(cWithOffer);
     }
-
-    //Exchange the ice candidate between caller and callee
+    // Exchange the ice candidate between caller and callee (caller)
     collectIceCandidates(cRef, 'caller', 'callee');
+    listenHideCam('callee');
   };
 
   const join = async () => {
     console.log('Joining the call');
     connecting.current = true;
+    namePeer.current = 'callee';
 
     const cRef = firestore().collection('meet').doc('chatId');
     const offer = (await cRef.get()).data()?.offer;
@@ -164,13 +165,13 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
             sdp: answer.sdp,
           },
         };
-        cRef.update(cWithAnswer); //listen return answer in useEffects
+        cRef.update(cWithAnswer); // ( Caller will listen answer that was returned in useEffects )
       }
-      //Exchange the ice candidate between caller and callee
-      //It reversed, joining part is callee
+      // Gathering IceCandidates, this have to called after callee connect answer and offer (callee)
       collectIceCandidates(cRef, 'callee', 'caller');
     }
     setGetIncomingCall(false);
+    listenHideCam('caller');
   };
 
   const hangup = () => {
@@ -181,7 +182,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     setLocalStream(null);
     setGetIncomingCall(false);
     console.log('clear');
-    props.navigation.pop();
+    props.navigation.goBack();
   };
 
   // Helper function
@@ -190,10 +191,25 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     if (track) track._switchCamera();
   };
 
+  const sendHideCam = (isHideCam: boolean) => {
+    if (namePeer.current) {
+      const cRef = firestore().collection('meet').doc('chatId');
+      const dataHideCam = {
+        [namePeer.current]: {
+          hideVideo: isHideCam,
+        },
+      };
+      cRef.update(dataHideCam);
+    }
+  };
+
   const hideAndOpenCamera = () => {
+    let isHideCam;
     localStream?.getVideoTracks().forEach((track: MediaStreamTrack) => {
       track.enabled = !track.enabled;
+      isHideCam = !track.enabled;
     });
+    if (isHideCam) sendHideCam(isHideCam);
   };
 
   const muteAndUnmute = () => {
@@ -279,7 +295,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
         <RTCView
           style={styles.remoteStream}
           objectFit={'cover'}
-          streamURL={remoteStream.toURL()}
+          streamURL={acrossPeerHideCam ? '' : remoteStream.toURL()}
         />
         <RTCView
           style={styles.localStream}
