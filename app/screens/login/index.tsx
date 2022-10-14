@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, KeyboardAvoidingView, ScrollView, Alert, Modal, ActivityIndicator } from 'react-native'
+import { View, Text, TouchableOpacity, KeyboardAvoidingView, ScrollView, Alert, Modal, ActivityIndicator, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { LoginProps } from '../../navigators/type'
 import { styles } from './styles'
@@ -7,14 +7,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, ButtonGroup, TextInputLogin } from '../../components'
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { isEmpty } from 'lodash'
-import { AccessToken, LoginManager } from 'react-native-fbsdk-next'
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { onFacebookButtonPress, onGoogleButtonPress } from '../../utils/functions'
 
 const LoginScreen = (props: LoginProps) => {
   const { navigation, route } = props
-  GoogleSignin.configure({
-    webClientId: '122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com',
-  });
 
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -62,41 +58,22 @@ const LoginScreen = (props: LoginProps) => {
     setLoading(false)
   }
 
-  async function onFacebookButtonPress() {
-    // Attempt login with permissions
-    const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-    if (result.isCancelled) {
-      throw 'User cancelled the login process';
-    }
-    // Once signed in, get the users AccesToken
-    const data = await AccessToken.getCurrentAccessToken();
-    if (!data) {
-      throw 'Something went wrong obtaining access token';
-    }
-    // Create a Firebase credential with the AccessToken
-    const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(facebookCredential);
-  }
-
-  async function onGoogleButtonPress() {
-    // Get the users ID token
-    const userInfor = await GoogleSignin.signIn()
-    console.log("Dong 85", userInfor);
-
-    const { idToken } = userInfor
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    // Sign-in the user with the credential
-    return auth().signInWithCredential(googleCredential);
-  }
-
   const fbLoginHandle = () => {
-    onFacebookButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+    if (Platform.OS === "android") {
+      onFacebookButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+    }
+    else {
+      setError("This feature is only support in android platform")
+    }
   }
 
   const googleLoginHandle = () => {
-    onGoogleButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+    if (Platform.OS === "android") {
+      onGoogleButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+    }
+    else {
+      setError("This feature is only support in android platform")
+    }
   }
 
   if (user) {

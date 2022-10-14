@@ -1,5 +1,5 @@
 export enum EnumButtonGroup {
   FACEBOOK = 'FACEBOOK',
-  APPLE = 'APPLE',
+  TWITTER = 'TWITTER',
   GOOGLE = 'GOOGLE',
 }

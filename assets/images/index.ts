@@ -10,6 +10,6 @@ const images = {
   loginHeader2: require('./login_header_2.png'),
   fbLoginBtn: require('./fb_login_btn.png'),
   googleLoginBtn: require('./google_login_btn.png'),
-  appleLoginBtn: require('./apple_login_btn.png'),
+  twitterLoginBtn: require('./twitter_login_btn.png'),
 };
 export default images;

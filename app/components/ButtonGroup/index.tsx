@@ -64,10 +64,17 @@ const styles = StyleSheet.create({
   btnIcon: {
     resizeMode: "contain",
     width: "100%",
-    height: 50
+    height: 40,
+    tintColor: "#fdac36"
   },
   btnContainer: {
     padding: 8,
-    flex: 1
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#fdac36",
+    borderWidth: 2,
+    marginRight: 8,
+    borderRadius: 4
   }
 })
