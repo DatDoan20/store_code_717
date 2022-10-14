@@ -5,6 +5,7 @@ import { VideoCallScreenWebRtc } from '../../app/screens/videoCall';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import LoginScreen from '../screens/login';
 import LoginSuccess from '../screens/loginSuccess';
+import { StartCallUserScreen } from '../screens/videoCall/startCallUser';
 
 interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> { }
@@ -13,6 +14,8 @@ export type NavigatorParamList = {
   videoCallWebRtc: undefined;
   login: undefined
   loginSuccess: undefined
+  StartCallUser: undefined;
+  VideoCallWebRtc: undefined;
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -29,6 +32,8 @@ const AppStack = () => {
       <Stack.Screen name="login" component={LoginScreen} />
       <Stack.Screen name='loginSuccess' component={LoginSuccess} />
       <Stack.Screen name="videoCallWebRtc" component={VideoCallScreenWebRtc} />
+      <Stack.Screen name="VideoCallWebRtc" component={VideoCallScreenWebRtc} />
+      <Stack.Screen name="StartCallUser" component={StartCallUserScreen} />
     </Stack.Navigator>
   );
 };
