@@ -283,6 +283,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation "me.zalo:sdk-core:4.1.0815"
+    implementation "me.zalo:sdk-auth:4.1.0815"
+    implementation "me.zalo:sdk-openapi:4.1.0815"
 }
 
 if (isNewArchitectureEnabled()) {

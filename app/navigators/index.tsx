@@ -1,9 +1,9 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {VideoCallScreenWebRtc} from '../../app/screens/videoCall';
 import {createNavigationContainerRef} from '@react-navigation/native';
-import {StartCallUserScreen} from '../screens/videoCall/startCallUser';
+import {StartCallUserScreen, VideoCallScreenWebRtc} from '../screens/videoCall';
+import {ZaloLoginScreen} from '../screens/zaloLogin';
 
 interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
@@ -11,6 +11,7 @@ interface NavigationProps
 export type NavigatorParamList = {
   StartCallUser: undefined;
   VideoCallWebRtc: undefined;
+  ZaloLogin: undefined;
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -23,9 +24,10 @@ const AppStack = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="StartCallUser">
+      initialRouteName="ZaloLogin">
       <Stack.Screen name="VideoCallWebRtc" component={VideoCallScreenWebRtc} />
       <Stack.Screen name="StartCallUser" component={StartCallUserScreen} />
+      <Stack.Screen name="ZaloLogin" component={ZaloLoginScreen} />
     </Stack.Navigator>
   );
 };
