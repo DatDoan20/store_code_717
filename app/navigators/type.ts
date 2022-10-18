@@ -10,3 +10,7 @@ export type RegisterProps = NativeStackScreenProps<
   NavigatorParamList,
   'register'
 >;
+export type ChatBotProps = NativeStackScreenProps<
+  NavigatorParamList,
+  'chatbot'
+>;

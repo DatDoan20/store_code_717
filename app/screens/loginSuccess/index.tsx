@@ -21,6 +21,10 @@ const LoginSuccess = (props: loginSuccessProps) => {
     auth().signOut().then(() => navigation.replace('login'))
   }
 
+  const chatWithBot = () => {
+    navigation.navigate('chatbot')
+  }
+
   return (
     <SafeAreaView edges={["top"]} style={styles.root} >
       <View style={styles.avatarContainer} >
@@ -41,6 +45,7 @@ const LoginSuccess = (props: loginSuccessProps) => {
         <Text style={styles.leftSideInfoContainer} >Login type:</Text>
         <Text style={styles.rightSideInfoContainer} >{loginType}</Text>
       </View>
+      <Button containerStyle={styles.btn} title='Chat with bot' onPress={chatWithBot} />
       <Button containerStyle={styles.btn} title='Logout' onPress={logoutHandle} />
     </SafeAreaView>
   )
