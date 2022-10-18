@@ -57,7 +57,7 @@ const LoginScreen = (props: LoginProps) => {
 
   const fbLoginHandle = () => {
     if (Platform.OS === "android") {
-      onFacebookButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+      onFacebookButtonPress().catch((err) => setError(err.toString()))
     }
     else {
       setError("This feature is only support in android platform")
@@ -66,7 +66,7 @@ const LoginScreen = (props: LoginProps) => {
 
   const googleLoginHandle = () => {
     if (Platform.OS === "android") {
-      onGoogleButtonPress().then(() => console.log("Login success")).catch((err) => setError(err.toString()))
+      onGoogleButtonPress().catch((err) => setError(err.toString()))
     }
     else {
       setError("This feature is only support in android platform")
