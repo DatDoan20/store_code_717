@@ -12,7 +12,7 @@ export const ZaloLoginScreen: FC = (props: any) => {
   const [isZaloLogin, setIsZaloLogin] = useState<boolean>(false);
 
   const handleLogin = async () => {
-    const result: boolean = await zaloLogin('app');
+    const result: boolean = await zaloLogin('123');
     console.log('zaloLogin result: ', result);
     if (result) {
       setIsZaloLogin(result);

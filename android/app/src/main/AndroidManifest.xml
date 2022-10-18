@@ -53,9 +53,8 @@
                 <data android:scheme="zalo-835122710496618967" />
             </intent-filter>
         </activity>
-
-<!--        <queries>-->
-<!--            <package android:name="com.zing.zalo" />-->
-<!--        </queries>-->
     </application>
+    <queries>
+        <package android:name="com.zing.zalo" />
+    </queries>
 </manifest>

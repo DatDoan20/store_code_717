@@ -101,6 +101,9 @@ public class ZaloModule extends ReactContextBaseJavaModule {
                             public void onSuccess(WritableMap map) {
                                 saveTokenToCache(map.getString("accessToken"), map.getString("refreshToken"));
                                 promise.resolve(map);
+                                Log.d("LOGIN_ZALO accessToken", map.getString("accessToken"));
+                                Log.d("LOGIN_ZALO refreshToken", map.getString("refreshToken"));
+
                             }
                         };
                         getAccessToken(OauthCode, codeVerifier, callback);
@@ -122,6 +125,7 @@ public class ZaloModule extends ReactContextBaseJavaModule {
                     }
                 });
             } catch (Exception e) {
+                Log.d("LOGIN_ZALO", "ERROR getAccessToken");
                 e.printStackTrace();
             }
         });
