@@ -6673,6 +6673,11 @@
   "resolved" "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"
   "version" "1.3.1"
 
+"react-native-kommunicate-chat@^1.6.8":
+  "integrity" "sha512-JGs7TOfzxuMbCABu93ouQODszAv4leNarj9rvgRZYEUyaN2L9YJQJ2B164laij8l7++fjwKsDAp/pli3AJIIZg=="
+  "resolved" "https://registry.npmjs.org/react-native-kommunicate-chat/-/react-native-kommunicate-chat-1.6.8.tgz"
+  "version" "1.6.8"
+
 "react-native-lightbox-v2@0.9.0":
   "integrity" "sha512-Fc5VFHFj2vokS+OegyTsANKb1CYoUlOtAv+EBH5wtpJn1b5cey6jVXH7136G5+8OC9JmKWSgKHc5thFwOoZTUg=="
   "resolved" "https://registry.npmjs.org/react-native-lightbox-v2/-/react-native-lightbox-v2-0.9.0.tgz"
@@ -6749,7 +6754,7 @@
     "event-target-shim" "6.0.2"
     "tar" "6.1.11"
 
-"react-native@*", "react-native@>=0.42.0", "react-native@>=0.60.0", "react-native@>=0.61.0", "react-native@>=0.63.3", "react-native@0.70.2":
+"react-native@*", "react-native@^0.63.3", "react-native@>=0.42.0", "react-native@>=0.60.0", "react-native@>=0.61.0", "react-native@>=0.63.3", "react-native@0.70.2":
   "integrity" "sha512-c0Usl1Lc4pApDI66wpHwX8SGBUqXouQ8Z8Q9gX4jBjnmO5E8Vmlv6IM0CWDqbX/tn+aKNHCBLqV5phnCqusGbw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.70.2.tgz"
   "version" "0.70.2"

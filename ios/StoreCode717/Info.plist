@@ -77,5 +77,13 @@
   <string>fbapi</string>
   <string>fb-messenger-share-api</string>
 </array>
+
+<key>NSContactsUsageDescription</key>
+<string>Allow Contacts</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Allow Photos</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Allow write access</string>
+
 </dict>
 </plist>
