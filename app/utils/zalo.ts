@@ -5,16 +5,27 @@ const zaloModule = NativeModules.Zalo as ZaloInterface; // "Zalo is name that wa
 interface ZaloInterface {
   getApplicationHashKey: () => Promise<string>;
   login: (authType: string) => Promise<any>; // return accessToken and refreshToken (WritableMap)
-  getUserProfile: () => Promise<any>; // return data user profile (WritableMap)
+  getUserProfile: () => Promise<UserProfile>; // return data user profile (WritableMap)
   AUTH_VIA_WEB: string;
   AUTH_VIA_APP: string;
   AUTH_VIA_APP_OR_WEB: string;
 }
+type DataPicture = {
+  url: string;
+};
+type Picture = {
+  data: DataPicture;
+};
 
-export const LoginVia = {
-  AUTH_VIA_WEB: zaloModule.AUTH_VIA_WEB,
-  AUTH_VIA_APP: zaloModule.AUTH_VIA_APP,
-  AUTH_VIA_APP_OR_WEB: zaloModule.AUTH_VIA_APP_OR_WEB,
+export type UserProfile = {
+  birthday: string;
+  error: number;
+  extCode: number;
+  gender: string;
+  id: string;
+  message: string;
+  name: string;
+  picture: Picture;
 };
 
 export const getHashKey = async () => {
@@ -27,7 +38,7 @@ export const getHashKey = async () => {
 export const zaloLogin = async (authType: string): Promise<boolean> => {
   try {
     const data = await zaloModule.login(authType);
-    console.log(data);
+    console.log('A&R TOKEN: ', data);
     return true;
   } catch (error) {
     console.log('ZaloLogin Error: ', error);
@@ -35,12 +46,14 @@ export const zaloLogin = async (authType: string): Promise<boolean> => {
   }
 };
 
-export const getUserProfile = async (): Promise<any> => {
+export const getUserProfile = async (): Promise<UserProfile | null> => {
   try {
-    const userProfile = await zaloModule.getUserProfile();
+    const userProfile: UserProfile = await zaloModule.getUserProfile();
     console.log('-----Data User Profile-----');
     console.log(userProfile, '++++++');
+    return userProfile;
   } catch (error: any) {
     console.log('getUserProfile Error: ', error.toString());
+    return null;
   }
 };
