@@ -25,15 +25,14 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   imgHeader2: {
-    width: width / 1.5,
-    height: width / 1.5,
+    width: width / 1.4,
+    height: width / 1.4,
     alignSelf: 'flex-end',
+    zIndex: 10,
+    resizeMode: 'contain',
   },
   inputContainer: {
     marginTop: 24,
-  },
-  space: {
-    height: 24,
   },
   body: {
     marginHorizontal: 40,
@@ -56,6 +55,7 @@ export const styles = StyleSheet.create({
     marginTop: 32,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 12,
   },
   noAccountText: {
     fontWeight: '700',

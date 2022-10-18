@@ -20,11 +20,10 @@ const ButtonIcon = ({ item, callBackItem }: { item: IconButtonInterface, callBac
 interface ButtonGroupProps {
   onPressFB?: () => void
   onPressGG?: () => void
-  onPressAPL?: () => void
 }
 
 export const ButtonGroup = (props: ButtonGroupProps) => {
-  const { onPressAPL, onPressFB, onPressGG } = props
+  const { onPressFB, onPressGG } = props
 
   const pressItem = (key: EnumButtonGroup) => {
     switch (key) {
@@ -36,10 +35,6 @@ export const ButtonGroup = (props: ButtonGroupProps) => {
       case EnumButtonGroup.GOOGLE:
         if (isFunction(onPressGG)) {
           onPressGG()
-        }
-      default:
-        if (isFunction(onPressAPL)) {
-          onPressAPL()
         }
         break;
     }

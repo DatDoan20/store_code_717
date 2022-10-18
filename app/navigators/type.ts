@@ -6,3 +6,7 @@ export type loginSuccessProps = NativeStackScreenProps<
   NavigatorParamList,
   'loginSuccess'
 >;
+export type RegisterProps = NativeStackScreenProps<
+  NavigatorParamList,
+  'register'
+>;

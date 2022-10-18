@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, ButtonGroup, TextInputLogin } from '../../components'
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { isEmpty } from 'lodash'
-import { onFacebookButtonPress, onGoogleButtonPress } from '../../utils/functions'
+import { onBasicLogin, onFacebookButtonPress, onGoogleButtonPress } from '../../utils/functions'
 
 const LoginScreen = (props: LoginProps) => {
   const { navigation, route } = props
@@ -43,19 +43,16 @@ const LoginScreen = (props: LoginProps) => {
   const loginHandle = async () => {
     setLoading(true)
     if (!isEmpty(email) && !isEmpty(password)) {
-      await auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => {
-          setError('User account signed in!');
-        })
-        .catch(error => {
-          setError(error.toString());
-        });
+      onBasicLogin(email, password, setError)
     }
     else {
       setError("Field required")
     }
     setLoading(false)
+  }
+
+  const registerHandle = () => {
+    navigation.navigate("register")
   }
 
   const fbLoginHandle = () => {
@@ -91,7 +88,6 @@ const LoginScreen = (props: LoginProps) => {
       >
         <KeyboardAvoidingView style={styles.root} >
           <LoginHeader />
-          <View style={styles.space} />
           <View style={styles.body} >
             <TextInputLogin
               setValue={setEmail}
@@ -123,7 +119,7 @@ const LoginScreen = (props: LoginProps) => {
               onPressFB={fbLoginHandle}
               onPressGG={googleLoginHandle}
             />
-            <TouchableOpacity style={styles.forgetAccountContainer} >
+            <TouchableOpacity onPress={registerHandle} style={styles.forgetAccountContainer} >
               <Text style={styles.noAccountText} >Don't have an account? <Text style={styles.registText} >Register Now</Text></Text>
             </TouchableOpacity>
           </View>

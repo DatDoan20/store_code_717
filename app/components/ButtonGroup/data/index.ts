@@ -13,10 +13,6 @@ export const ButtonGroupData: IconButtonInterface[] = [
     key: EnumButtonGroup.FACEBOOK,
   },
   {
-    img: images.twitterLoginBtn,
-    key: EnumButtonGroup.TWITTER,
-  },
-  {
     img: images.googleLoginBtn,
     key: EnumButtonGroup.GOOGLE,
   },
