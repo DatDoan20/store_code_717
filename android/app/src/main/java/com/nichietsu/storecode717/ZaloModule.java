@@ -1,5 +1,7 @@
 package com.nichietsu.storecode717;
 
+import static com.facebook.react.bridge.UiThreadUtil.runOnUiThread;
+
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -12,9 +14,11 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.zing.zalo.zalosdk.oauth.FeedData;
 import com.zing.zalo.zalosdk.oauth.LoginVia;
 import com.zing.zalo.zalosdk.oauth.OAuthCompleteListener;
 import com.zing.zalo.zalosdk.oauth.OauthResponse;
+import com.zing.zalo.zalosdk.oauth.OpenAPIService;
 import com.zing.zalo.zalosdk.oauth.ZaloOpenAPICallback;
 import com.zing.zalo.zalosdk.oauth.ZaloSDK;
 import com.zing.zalo.zalosdk.oauth.model.ErrorResponse;
@@ -194,5 +198,42 @@ public class ZaloModule extends ReactContextBaseJavaModule {
     public void logout() {
         ZaloSDK.Instance.unauthenticate();
         clearTokenFromCache();
+    }
+
+    @ReactMethod
+    public void postFeedByApp(final Promise promise) { // open app -> click đăng trong app zalo
+//        ReadableArray thumbs = feedData.getArray("linkThumb");
+//        String[] thumbsParsed = new String[Objects.requireNonNull(thumbs).size()];
+//
+//        for (int i = 0; i < thumbs.size(); i++) {
+//            thumbsParsed[i] = thumbs.getString(i);
+//        }
+//
+//        Map<String, Object> others = Objects.requireNonNull(feedData.getMap("others")).toHashMap();
+//        Map<String, String> othersParsed = new HashMap();
+//        for (Map.Entry<String, Object> entry : others.entrySet()) {
+//            if (entry.getValue() instanceof String) {
+//                othersParsed.put(entry.getKey(), (String) entry.getValue());
+//            }
+//        }
+
+        final FeedData feed = new FeedData();
+        feed.setMsg("test post Msg");
+        feed.setLink("https://www.theguardian.com/lifeandstyle/2020/sep/05/what-cats-mean-by-miaow-japans-pet-guru-knows-just-what-your-feline-friend-wants");
+        feed.setLinkTitle("test post title");
+        feed.setLinkSource("https://www.theguardian.com/lifeandstyle/2020/sep/05/what-cats-mean-by-miaow-japans-pet-guru-knows-just-what-your-feline-friend-wants");
+        feed.setLinkDesc("https://www.theguardian.com/lifeandstyle/2020/sep/05/what-cats-mean-by-miaow-japans-pet-guru-knows-just-what-your-feline-friend-wants");
+        feed.setLinkThumb(new String[]{"https://i.guim.co.uk/img/media/26392d05302e02f7bf4eb143bb84c8097d09144b/446_167_3683_2210/master/3683.jpg?width=620&quality=45&dpr=2&s=none"});
+
+
+        runOnUiThread(() -> OpenAPIService.getInstance().shareFeed(reactContext.getCurrentActivity(), feed, (success, send_action, message, result_data) -> {
+            final WritableMap data = Arguments.createMap();
+            data.putBoolean("success", success);
+            data.putString("data", result_data);
+            data.putString("message", message);
+            data.putInt("sendAction", send_action);
+
+            promise.resolve(data);
+        }));
     }
 }

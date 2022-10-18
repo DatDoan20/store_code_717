@@ -12,6 +12,7 @@ import {customTheme} from '../../theme';
 import {
   getHashKey,
   getUserProfile,
+  postFeedByApp,
   UserProfile,
   zaloLogin,
 } from '../../utils/zalo';
@@ -28,6 +29,10 @@ export const ZaloLoginScreen: FC = (props: any) => {
     if (result) {
       setIsZaloLogin(result);
     }
+  };
+
+  const handlePostFeedByApp = async () => {
+    await postFeedByApp();
   };
 
   useEffect(() => {
@@ -70,6 +75,11 @@ export const ZaloLoginScreen: FC = (props: any) => {
 
       <TouchableOpacity onPress={handleLogin} style={styles.btnStartMakeCall}>
         <Text style={styles.textErr}>Login zalo test</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={handlePostFeedByApp}
+        style={styles.btnStartMakeCall}>
+        <Text style={styles.textErr}>Post Feed By App</Text>
       </TouchableOpacity>
     </View>
   );

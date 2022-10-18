@@ -6,9 +6,8 @@ interface ZaloInterface {
   getApplicationHashKey: () => Promise<string>;
   login: (authType: string) => Promise<any>; // return accessToken and refreshToken (WritableMap)
   getUserProfile: () => Promise<UserProfile>; // return data user profile (WritableMap)
-  AUTH_VIA_WEB: string;
-  AUTH_VIA_APP: string;
-  AUTH_VIA_APP_OR_WEB: string;
+  postFeedByApp: () => Promise<any>;
+  postFeed: (message: string, link: string) => Promise<any>;
 }
 type DataPicture = {
   url: string;
@@ -55,5 +54,14 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
   } catch (error: any) {
     console.log('getUserProfile Error: ', error.toString());
     return null;
+  }
+};
+
+export const postFeedByApp = async () => {
+  try {
+    const result = await zaloModule.postFeedByApp();
+    console.log(result);
+  } catch (error: any) {
+    console.log('postFeedByApp Error: ', error.toString());
   }
 };
