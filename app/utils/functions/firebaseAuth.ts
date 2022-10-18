@@ -1,5 +1,5 @@
 import {EnumLoginBy} from './../enums/index';
-import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
 import firestore from '@react-native-firebase/firestore';
@@ -18,16 +18,7 @@ export async function onBasicRegister({
 }) {
   auth()
     .createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      firestore()
-        .collection('Users')
-        .add({
-          username,
-          email,
-          loginBy: EnumLoginBy.BASIC,
-        })
-        .catch(err => new Error(err));
-    })
+    .then(() => {})
     .catch(error => {
       if (error.code === 'auth/email-already-in-use') {
         setError('That email address is already in use!');
@@ -91,3 +82,16 @@ export async function onGoogleButtonPress() {
   // Sign-in the user with the credential
   return auth().signInWithCredential(googleCredential);
 }
+
+export const getLoginType = (
+  curUser: FirebaseAuthTypes.User | null,
+): EnumLoginBy => {
+  switch (curUser?.providerData[0]?.providerId) {
+    case 'facebook.com':
+      return EnumLoginBy.FACEBOOK;
+    case 'google.com':
+      return EnumLoginBy.GOOGLE;
+    default:
+      return EnumLoginBy.BASIC;
+  }
+};

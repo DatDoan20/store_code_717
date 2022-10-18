@@ -2,7 +2,17 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import React, {FC, useEffect, useRef, useState} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Image,
+  ViewStyle,
+  ImageStyle,
+  StyleProp,
+} from 'react-native';
 import {
   RTCPeerConnection,
   RTCIceCandidate,
@@ -13,6 +23,7 @@ import {
   EventOnCandidate,
   MediaStreamTrack,
 } from 'react-native-webrtc';
+import images from '../../../assets/images';
 import {customTheme} from '../../theme';
 import Stream from '../../utils/stream';
 import {Calling} from './calling';
@@ -20,6 +31,7 @@ import {ButtonVideo} from './components/buttonVideo';
 import {IncomingCall} from './incomingCall';
 import {TypeVideoCall, VideoCall} from './startCallUser';
 
+const {width} = Dimensions.get('window');
 const configuration = {iceServers: [{url: 'stun:stun.l.google.com:19302'}]};
 
 export const VideoCallScreenWebRtc: FC = (props: any) => {
@@ -35,6 +47,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
   );
   const [acrossPeerHangup, SetAcrossPeerHangup] = useState<boolean>(false);
   const [acrossPeerHideCam, setAcrossPeerHideCam] = useState<boolean>(false);
+  const [peerHideCam, setPeerHideCam] = useState<boolean>(false);
 
   useEffect(() => {
     if (data.type === TypeVideoCall.CALLER) createCall();
@@ -95,7 +108,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     const cRef = firestore().collection('meet').doc('chatId');
     cRef.onSnapshot(snapshot => {
       const data = snapshot.data();
-      const isHideCam = data?.[peerNeedListen]?.hideVideo;
+      const isHideCam = data?.[peerNeedListen]?.hideCam;
       if (isHideCam || isHideCam === false) setAcrossPeerHideCam(isHideCam);
     });
   };
@@ -179,14 +192,15 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     setGetIncomingCall(false);
   };
 
-  const hangup = () => {
+  const hangup = async () => {
     connecting.current = false;
     streamCleanUp();
-    firestoreCleanUp();
+    await firestoreCleanUp();
     setRemoteStream(null);
     setLocalStream(null);
     setGetIncomingCall(false);
     setAcrossPeerHideCam(false);
+    setPeerHideCam(false);
     console.log('clear');
     props.navigation.goBack();
   };
@@ -197,7 +211,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       const cRef = firestore().collection('meet').doc('chatId');
       const dataHideCam = {
         [namePeer.current]: {
-          hideVideo: isHideCam,
+          hideCam: isHideCam,
         },
       };
       cRef.update(dataHideCam);
@@ -215,11 +229,14 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       track.enabled = !track.enabled;
       isHideCam = !track.enabled;
     });
-    if (isHideCam || isHideCam === false) sendHideCam(isHideCam);
+    if (isHideCam || isHideCam === false) {
+      sendHideCam(isHideCam);
+      setPeerHideCam(isHideCam);
+    }
   };
 
-  const muteAndUnmute = () => {
-    localStream?.getAudioTracks().forEach((track: MediaStreamTrack) => {
+  const muteAndUnmute = async () => {
+    localStream?.getAudioTracks().map((track: MediaStreamTrack) => {
       track.enabled = !track.enabled;
     });
   };
@@ -249,7 +266,7 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
       callerCandidate.forEach(async candidate => {
         await candidate.ref.delete();
       });
-      cRef.delete();
+      await cRef.delete();
     }
   };
 
@@ -294,20 +311,65 @@ export const VideoCallScreenWebRtc: FC = (props: any) => {
     return <Calling localStream={localStream} hangup={hangup} />;
   }
 
+  const viewHideCam = (
+    viewHideCamStyle: StyleProp<ViewStyle>,
+    avatarStyle: ImageStyle,
+  ) => {
+    return (
+      <View style={viewHideCamStyle}>
+        <Image
+          source={images.avatarLucy}
+          style={avatarStyle}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  };
+
+  const showRemoteStream = () => {
+    console.log('acrossPeerHideCam', acrossPeerHideCam);
+    if (acrossPeerHideCam === true) {
+      const viewHideCamStyle = [styles.remoteStream, styles.viewHideCam];
+      const avatarStyle = styles.avatarHideCamRemote;
+      return viewHideCam(viewHideCamStyle, avatarStyle);
+    } else {
+      return (
+        <RTCView
+          style={styles.remoteStream}
+          objectFit={'cover'}
+          streamURL={remoteStream!.toURL()}
+          zOrder={1} // it's zIndex
+        />
+      );
+    }
+  };
+
+  const showLocalStream = () => {
+    console.log('peerHideCam', peerHideCam);
+    if (peerHideCam === true) {
+      const viewHideCamStyle = [styles.localStream, styles.viewHideCam];
+      const avatarStyle = styles.avatarHideCamLocal;
+      return viewHideCam(viewHideCamStyle, avatarStyle);
+    } else {
+      return (
+        <RTCView
+          style={styles.localStream}
+          objectFit={'cover'}
+          streamURL={localStream!.toURL()}
+          zOrder={2}
+        />
+      );
+    }
+  };
+
   // Calling success, connected
   if (localStream && remoteStream) {
     return (
       <View style={{flex: 1, backgroundColor: customTheme.colors.white}}>
-        <RTCView
-          style={styles.remoteStream}
-          objectFit={'cover'}
-          streamURL={acrossPeerHideCam === true ? '' : remoteStream.toURL()}
-        />
-        <RTCView
-          style={styles.localStream}
-          objectFit={'cover'}
-          streamURL={localStream.toURL()}
-        />
+        {showRemoteStream()}
+
+        {showLocalStream()}
+
         <View style={styles.containerBtn}>
           <ButtonVideo
             callback={hideAndOpenCamera}
@@ -365,8 +427,8 @@ const styles = StyleSheet.create({
   },
   localStream: {
     position: 'absolute',
-    width: 100,
-    height: 150,
+    width: width / 4,
+    height: width / 2.5,
     top: 0,
     left: 20,
   },
@@ -385,5 +447,24 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  blue: {backgroundColor: customTheme.colors.blue_3},
+  blue: {
+    backgroundColor: customTheme.colors.blue_3,
+  },
+  viewHideCam: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: customTheme.colors.grey_6,
+  },
+  avatarHideCamRemote: {
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    borderColor: customTheme.colors.white,
+  },
+  avatarHideCamLocal: {
+    height: width / 10,
+    width: width / 10,
+    borderRadius: width / 20,
+    borderColor: customTheme.colors.white,
+  },
 });

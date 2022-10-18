@@ -74,7 +74,10 @@ const LoginScreen = (props: LoginProps) => {
   }
 
   if (user) {
-    navigation.replace("loginSuccess")
+    setTimeout(() => {
+      navigation.replace("loginSuccess")
+    }, 500)
+    return <></>
   }
 
   if (initializing) return null
