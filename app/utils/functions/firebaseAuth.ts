@@ -2,7 +2,6 @@ import {EnumLoginBy} from './../enums/index';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {AccessToken, LoginManager} from 'react-native-fbsdk-next';
-import firestore from '@react-native-firebase/firestore';
 
 // Register basic
 export async function onBasicRegister({
