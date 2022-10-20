@@ -7,6 +7,7 @@ import LoginScreen from '../screens/login';
 import LoginSuccess from '../screens/loginSuccess';
 import { StartCallUserScreen } from '../screens/videoCall/startCallUser';
 import RegisterScreen from '../screens/register';
+import EditProfileScreen from '../screens/editProfile';
 
 interface NavigationProps
   extends Partial<React.ComponentProps<typeof NavigationContainer>> { }
@@ -18,6 +19,9 @@ export type NavigatorParamList = {
   StartCallUser: undefined;
   VideoCallWebRtc: undefined;
   register: undefined;
+  editProfile: {
+    userId: string
+  }
 };
 
 export const navigationRef = createNavigationContainerRef();
@@ -37,6 +41,7 @@ const AppStack = () => {
       <Stack.Screen name="VideoCallWebRtc" component={VideoCallScreenWebRtc} />
       <Stack.Screen name="StartCallUser" component={StartCallUserScreen} />
       <Stack.Screen name="register" component={RegisterScreen} />
+      <Stack.Screen name='editProfile' component={EditProfileScreen} />
     </Stack.Navigator>
   );
 };
