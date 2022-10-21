@@ -10,7 +10,7 @@ import { styles } from './styles'
 import images from '../../../assets/images'
 
 const LoginSuccess = (props: loginSuccessProps) => {
-  const { navigation, route } = props
+  const { navigation } = props
   const curUser = auth().currentUser
   const loginType: EnumLoginBy = getLoginType(curUser)
   const imgUri = curUser?.photoURL
@@ -19,6 +19,14 @@ const LoginSuccess = (props: loginSuccessProps) => {
 
   const logoutHandle = () => {
     auth().signOut().then(() => navigation.replace('login'))
+  }
+
+  const chantHandle = () => {
+    navigation.navigate("chat", {
+      userId: curUser?.uid || "",
+      userName: curUser?.displayName || curUser?.email || "",
+      userAvatar: imgUri
+    })
   }
 
   return (
@@ -41,6 +49,7 @@ const LoginSuccess = (props: loginSuccessProps) => {
         <Text style={styles.leftSideInfoContainer} >Login type:</Text>
         <Text style={styles.rightSideInfoContainer} >{loginType}</Text>
       </View>
+      <Button containerStyle={styles.btn} title='go to chat' onPress={chantHandle} />
       <Button containerStyle={styles.btn} title='Logout' onPress={logoutHandle} />
     </SafeAreaView>
   )

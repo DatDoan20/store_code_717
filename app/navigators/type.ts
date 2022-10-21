@@ -10,7 +10,4 @@ export type RegisterProps = NativeStackScreenProps<
   NavigatorParamList,
   'register'
 >;
-export type EditProfileProps = NativeStackScreenProps<
-  NavigatorParamList,
-  'editProfile'
->;
+export type ChatProps = NativeStackScreenProps<NavigatorParamList, 'chat'>;
