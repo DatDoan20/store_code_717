@@ -2270,11 +2270,11 @@ index 0000000..c134020
 Binary files /dev/null and b/node_modules/react-native-dialogflow/android/build/intermediates/compiled_local_resources/debug/out/mipmap-xxhdpi-v4_ic_launcher.png.flat differ
 diff --git a/node_modules/react-native-dialogflow/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-dialogflow/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..16fec26
+index 0000000..9fb03d6
 --- /dev/null
 +++ b/node_modules/react-native-dialogflow/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 @@ -0,0 +1,5 @@
-+#Fri Oct 21 09:35:03 ICT 2022
++#Fri Oct 21 13:59:30 ICT 2022
 +de.innfactory.apiai.react-native-dialogflow-main-7\:/mipmap-hdpi/ic_launcher.png=G\:\\WorkSpace\\reactnative\\store_code_717\\node_modules\\react-native-dialogflow\\android\\build\\intermediates\\packaged_res\\debug\\mipmap-hdpi-v4\\ic_launcher.png
 +de.innfactory.apiai.react-native-dialogflow-main-7\:/mipmap-xxhdpi/ic_launcher.png=G\:\\WorkSpace\\reactnative\\store_code_717\\node_modules\\react-native-dialogflow\\android\\build\\intermediates\\packaged_res\\debug\\mipmap-xxhdpi-v4\\ic_launcher.png
 +de.innfactory.apiai.react-native-dialogflow-main-7\:/mipmap-mdpi/ic_launcher.png=G\:\\WorkSpace\\reactnative\\store_code_717\\node_modules\\react-native-dialogflow\\android\\build\\intermediates\\packaged_res\\debug\\mipmap-mdpi-v4\\ic_launcher.png

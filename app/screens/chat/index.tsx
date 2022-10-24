@@ -1,11 +1,14 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Bubble, BubbleProps, GiftedChat, IMessage, Reply } from 'react-native-gifted-chat'
+import { ActionsProps, Bubble, BubbleProps, GiftedChat, IMessage, Reply, Send, SendProps, Actions, InputToolbar } from 'react-native-gifted-chat'
 import { Dialogflow_V2, RequestQueryResult } from 'react-native-dialogflow'
 import { dialogFlowConfig } from '../../../env'
 import firstore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import { ChatProps } from '../../navigators/type'
 import { isEmpty, random } from 'lodash'
+import { CustomActions } from './components'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import images from '../../../assets/images'
 
 const initialAvatar = 'https://img.thuthuat123.com/uploads/2019/07/13/anh-hoa-sen-cuc-ky-dep-mat_090626361.jpg'
 
@@ -15,28 +18,27 @@ const BOT = {
   avatar: initialAvatar
 }
 
-const USER = {
-  _id: 1,
-  name: "Mr.User"
-}
-
 const ChatScreen = (props: ChatProps) => {
   const { navigation, route } = props
   const { userId, userName, userAvatar } = route.params
 
+  const USER = {
+    _id: userId,
+    name: userName,
+    avatar: userAvatar || 'https://img.thuthuat123.com/uploads/2019/07/13/anh-hoa-sen-cuc-ky-dep-mat_090626361.jpg'
+  }
+
   const initialMes: IMessage[] = [
     {
       _id: 2,
-      text: 'Hello\nMy name is Bot',
+      text: userName,
       createdAt: new Date().getTime(),
       image: "https://media.istockphoto.com/vectors/blue-cute-robot-vector-id1191411980?k=20&m=1191411980&s=612x612&w=0&h=RwynZNA7Gf-VO3W8cuhI1s9bsKbZ1QZ89rKNrfSJCMA=",
-      user: BOT
+      user: USER
     },
   ]
 
   const [messages, setMessages] = useState<IMessage[]>()
-  const [id, setId] = useState<number>(1)
-  const [name, setName] = useState<string>('')
 
   useEffect(() => {
     Dialogflow_V2.setConfiguration(
@@ -46,7 +48,14 @@ const ChatScreen = (props: ChatProps) => {
       dialogFlowConfig.project_id
     )
     readMessFirebase()
+
   }, [])
+
+  const goBackHandle = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack()
+    }
+  }
 
   const readMessFirebase = () => {
     firstore()
@@ -71,10 +80,14 @@ const ChatScreen = (props: ChatProps) => {
           })
         }
         else {
-          mesData = [...initialMes]
-          mesData.map((e) => {
-            addMessFirebase(e)
-          })
+          const message = initialMes[0].text
+          Dialogflow_V2.requestQuery(
+            message,
+            (result) => handleGoogleRes(result),
+            (err) => {
+              console.log(err)
+            }
+          )
         }
         setMessages(mesData)
       })
@@ -93,15 +106,21 @@ const ChatScreen = (props: ChatProps) => {
       .catch(err => console.warn(err.toString()))
   }
 
-  const handleGoogleRes = (result: any, userInput: IMessage[]) => {
+  const handleGoogleRes = (result: any, userInput?: IMessage[]) => {
+    console.log(result);
     const resultData: RequestQueryResult = result
+    const payload = resultData.queryResult.fulfillmentMessages.find(i => i.payload)
     const text = resultData.queryResult.fulfillmentMessages[0].text.text[0]
     const _id = resultData.responseId
-    sendBotRes(text, _id, userInput)
+    sendBotRes(text, _id, userInput, payload)
   }
 
-  const sendBotRes = (text: string, _id: string, userInput: IMessage[]) => {
-    if (text === "Hello, What do you want to buy?") {
+  const sendBotRes = (text: string, _id: string, userInput?: IMessage[], payload?: any) => {
+    if (!isEmpty(payload)) {
+      const quickRepliesData: {
+        payload: string,
+        title: string
+      }[] = payload.payload.quick_replies
       const msg: IMessage = {
         _id,
         text,
@@ -110,24 +129,21 @@ const ChatScreen = (props: ChatProps) => {
         quickReplies: {
           type: "radio",
           keepIt: true,
-          values: [
-            {
-              title: "Shoes",
-              value: "Shoes",
-            },
-            {
-              title: "T-shirt",
-              value: "T-shirt",
-            },
-            {
-              title: "Jacket",
-              value: "Jacket",
-            },
-          ]
+          values: quickRepliesData.map(i => {
+            return {
+              title: i.title,
+              value: i.payload
+            }
+          })
         }
       }
       addMessFirebase(msg)
-      setMessages(GiftedChat.append(userInput, [msg]))
+      if (userInput) {
+        setMessages(GiftedChat.append(userInput, [msg]))
+      }
+      else {
+        setMessages(GiftedChat.append(messages, [msg]))
+      }
     }
     else {
       const msg: IMessage = {
@@ -137,7 +153,12 @@ const ChatScreen = (props: ChatProps) => {
         user: BOT,
       }
       addMessFirebase(msg)
-      setMessages(GiftedChat.append(userInput, [msg]))
+      if (userInput) {
+        setMessages(GiftedChat.append(userInput, [msg]))
+      }
+      else {
+        setMessages(GiftedChat.append(messages, [msg]))
+      }
     }
   }
 
@@ -190,17 +211,69 @@ const ChatScreen = (props: ChatProps) => {
       }} />
   }
 
+  const renderActions = (props: ActionsProps): React.ReactNode => (
+    <Actions {...props}
+      icon={() => <Image
+        source={images.hideCamera}
+        resizeMode="contain"
+        style={{
+          width: 24, height: 24,
+          tintColor: "blue"
+        }}
+      />}
+    />
+  )
+
+  const renderSend = (props: SendProps<IMessage>) => (
+    <Send {...props} containerStyle={{ justifyContent: 'center', alignItems: "center" }}>
+      <Text style={{ textAlign: "center", color: "blue", marginHorizontal: 12 }} >Gửi</Text>
+    </Send>
+  )
+
+
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }} >
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }} >
+      <View style={{
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 12,
+        backgroundColor: "blue"
+      }} >
+        <TouchableOpacity onPress={goBackHandle} style={{ paddingHorizontal: 12, justifyContent: 'center', alignItems: "center", marginRight: 12 }} >
+          <Image style={{ width: 20, height: 20, tintColor: "white" }} source={images.backArrow} />
+        </TouchableOpacity>
+        <View style={{ justifyContent: "center", alignItems: "center", borderRadius: 100, width: 40, height: 40, overflow: "hidden" }} >
+          <Image source={{ uri: BOT.avatar }} style={{ width: 40, height: 40 }} />
+        </View>
+        <Text style={{ color: "white", marginLeft: 12, fontSize: 18 }} >MR.Bot</Text>
+      </View>
       <GiftedChat
         messages={messages}
         onSend={(mes) => onSend(mes)}
         onQuickReply={(quick) => onQuickReply(quick)}
         user={USER}
+        placeholder="Nhập tin nhắn..."
         renderBubble={renderBubble}
+        renderSend={renderSend}
+        // renderActions={renderActions}
+        scrollToBottom
+        timeTextStyle={{
+          right: {
+            color: "lightgray"
+          }
+        }}
+        renderInputToolbar={(props) => <InputToolbar
+          {...props}
+          containerStyle={{
+            marginHorizontal: 12,
+            borderWidth: 1,
+            borderColor: "blue",
+            borderRadius: 100,
 
+          }}
+        />}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
