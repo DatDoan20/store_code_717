@@ -1,6 +1,11 @@
 import images from '../../../assets/images';
 
-export const Users = [
+export type User = {
+  id: string;
+  uri: any;
+};
+
+export const Users: User[] = [
   {id: '1', uri: images.thumbnail_1},
   {id: '2', uri: images.thumbnail_2},
   {id: '3', uri: images.thumbnail_3},

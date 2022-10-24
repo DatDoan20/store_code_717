@@ -6,11 +6,12 @@ import {customTheme} from '../../../theme';
 interface Button {
   img: any;
   btnRStyle: any;
+  callback: () => void;
 }
 export const Button = (props: Button) => {
-  const {img, btnRStyle} = props;
+  const {img, btnRStyle, callback} = props;
   return (
-    <TouchableOpacity onPress={() => {}} style={styles.iconContainer}>
+    <TouchableOpacity onPress={callback} style={styles.iconContainer}>
       <Animated.View style={[styles.iconButtonContainer, btnRStyle]}>
         <Image source={img} style={styles.icon} resizeMode="contain" />
       </Animated.View>

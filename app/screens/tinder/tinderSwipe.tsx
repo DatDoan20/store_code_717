@@ -1,107 +1,63 @@
 import React, {FC, useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, Image} from 'react-native';
-import Animated, {
+import {View, StyleSheet, Dimensions} from 'react-native';
+import {
   useSharedValue,
-  withSpring,
   useAnimatedStyle,
-  useAnimatedGestureHandler,
   interpolate,
   Extrapolate,
-  useDerivedValue,
-  runOnJS,
-  withTiming,
 } from 'react-native-reanimated';
-import {
-  GestureHandlerRootView,
-  PanGestureHandler,
-} from 'react-native-gesture-handler';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {customTheme} from '../../theme';
-import {Users} from './dumbData';
 import {Button} from './components/Button';
 import images from '../../../assets/images';
+import {User, Users} from './dumbData';
+import {ItemCard} from './components/itemCard';
 
 const {width, height} = Dimensions.get('window');
 
 export const TinderSwipeScreen: FC = (props: any) => {
-  const translateX = useSharedValue(0);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
-  console.log(currentIndex);
-  const updateCurrentIndex = () => {
-    setCurrentIndex(currentIndex + 1);
-  };
-
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (event, context: any) => {
-      context.translateX = translateX.value;
-    },
-    onActive: (event, context) => {
-      translateX.value = event.translationX;
-    },
-    onEnd: (event, context) => {
-      if (translateX.value > width / 2) {
-        translateX.value = width + 100;
-        runOnJS(updateCurrentIndex)();
-        return;
-      }
-      if (translateX.value < -width / 2) {
-        translateX.value = -width - 100;
-        runOnJS(updateCurrentIndex)();
-        return;
-      }
-      translateX.value = withSpring(0);
-    },
-  });
+  const translateXGlobal = useSharedValue(0);
+  const [users, setUsers] = useState<User[]>(Users);
 
   useEffect(() => {
-    // if (currentIndex !== 0) {
-    //   setTimeout(() => {
-    //     translateX.value = withSpring(0);
-    //   }, 5000);
-    // }
-  }, [currentIndex]);
+    if (users.length === 0) {
+      setUsers(Users);
+    }
+  }, [users.length]);
 
-  const rCard = useAnimatedStyle(() => {
-    translateX.value = withSpring(0);
-    const rotate = interpolate(
-      translateX.value,
-      [-width / 2, 0, width / 2],
-      [-15, 0, 15],
-      Extrapolate.CLAMP,
-    );
+  const onSwiping = (x: number) => {
+    translateXGlobal.value = x;
+  };
 
-    return {
-      transform: [
-        {translateX: translateX.value},
-        // {translateY: translateY.value},
-        {rotate: `${rotate}deg`},
-      ],
-    };
-  });
+  const handleSwipe = (value?: string) => {
+    translateXGlobal.value = 0;
+    setUsers((prevState: User[]) => [...prevState.slice(1)]);
+  };
 
-  const rNextCard = useAnimatedStyle(() => {
-    const scale = interpolate(
-      translateX.value,
-      [-width / 2, 0, width / 2],
-      [1, 0.8, 1],
-      Extrapolate.CLAMP,
-    );
+  // const rNextCardStyle = useAnimatedStyle(() => {
+  //   const scale = interpolate(
+  //     translateXGlobal.value,
+  //     [-width / 2, 0, width / 2],
+  //     [1, 0.8, 1],
+  //     Extrapolate.CLAMP,
+  //   );
 
-    const opacity = interpolate(
-      translateX.value,
-      [-width / 2, 0, width / 2],
-      [1, 0, 1],
-      Extrapolate.CLAMP,
-    );
+  //   const opacity = interpolate(
+  //     translateXGlobal.value,
+  //     [-width / 2, 0, width / 2],
+  //     [1, 0, 1],
+  //     Extrapolate.CLAMP,
+  //   );
 
-    return {
-      opacity,
-      transform: [{scale}],
-    };
-  });
+  //   return {
+  //     opacity,
+  //     transform: [{scale}],
+  //   };
+  // });
 
   const rButtonMatch = useAnimatedStyle(() => {
     const scale = interpolate(
-      translateX.value,
+      translateXGlobal.value,
       [0, width / 2],
       [1, 1.5],
       Extrapolate.CLAMP,
@@ -114,7 +70,7 @@ export const TinderSwipeScreen: FC = (props: any) => {
 
   const rButtonClose = useAnimatedStyle(() => {
     const scale = interpolate(
-      translateX.value,
+      translateXGlobal.value,
       [-width / 2, 0],
       [1.5, 1],
       Extrapolate.CLAMP,
@@ -126,34 +82,22 @@ export const TinderSwipeScreen: FC = (props: any) => {
   });
 
   const renderUsers = () => {
-    return Users.map((item, i) => {
-      if (i < currentIndex) {
-        return null;
-      }
-      if (i === currentIndex) {
-        return (
-          <PanGestureHandler onGestureEvent={gestureHandler} key={item.id}>
-            <Animated.View style={[styles.containerImg, rCard]}>
-              <Image
-                style={[styles.img]}
-                resizeMode={'cover'}
-                source={item.uri}
-              />
-            </Animated.View>
-          </PanGestureHandler>
+    // const data = users.reverse();
+    return users
+      .map((item: User, i: number) => {
+        const view = (
+          <ItemCard
+            key={i}
+            item={item}
+            onSwiping={onSwiping}
+            handleSwiped={handleSwipe}
+            index={i}
+            rNextCardStyle={{}}
+          />
         );
-      } else {
-        return (
-          <Animated.View style={[styles.containerImg, rNextCard]} key={item.id}>
-            <Image
-              style={[styles.img]}
-              resizeMode={'cover'}
-              source={item.uri}
-            />
-          </Animated.View>
-        );
-      }
-    }).reverse();
+        return view;
+      })
+      .reverse();
   };
 
   return (
@@ -161,8 +105,16 @@ export const TinderSwipeScreen: FC = (props: any) => {
       <View style={styles.root}>
         <View style={styles.container}>{renderUsers()}</View>
         <View style={styles.btnContainer}>
-          <Button img={images.close} btnRStyle={rButtonClose} />
-          <Button img={images.heart} btnRStyle={rButtonMatch} />
+          <Button
+            img={images.close}
+            btnRStyle={rButtonClose}
+            callback={handleSwipe}
+          />
+          <Button
+            img={images.heart}
+            btnRStyle={rButtonMatch}
+            callback={handleSwipe}
+          />
         </View>
       </View>
     </GestureHandlerRootView>
@@ -197,6 +149,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-function useStates<T>(arg0: number): [any, any] {
-  throw new Error('Function not implemented.');
-}
