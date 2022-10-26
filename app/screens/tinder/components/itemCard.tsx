@@ -21,10 +21,18 @@ interface ItemCard {
   handleSwiped: (direction?: string) => void;
   index: number;
   rNextCardStyle: {};
+  value?: number;
 }
 export const ItemCard = (props: ItemCard) => {
-  const {item, onSwiping, handleSwiped, index, rNextCardStyle} = props;
-  const translateX = useSharedValue(0);
+  const {
+    item,
+    onSwiping,
+    handleSwiped,
+    index,
+    rNextCardStyle,
+    value = 0,
+  } = props;
+  const translateX = useSharedValue(value);
   console.log(item.id, '=', translateX.value);
 
   const handleOnEnd = () => {
