@@ -1,0 +1,14 @@
+export const dialogFlowConfig = {
+  type: 'service_account',
+  project_id: 'chatbottesting-oxch',
+  private_key_id: 'b0a71dde3059300155835caee63a34d9714c95b5',
+  private_key:
+    '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCwKtGVXHGOWcge\nM8y5I8Q+s8kpMIy2HEKnUAO9U7NPvl5RWRTyABh3iQXIPzV7PgbaWUB3I7dEbFef\nqZsPRN+U9PN7te1Ej2HpeylkJIOWnXib2YH3OIuRiIXUxAnrF8s2HKJ3FIEGzBaw\nKg1PYe2d7l3ZbYgWPwR9YNCra06SB7cUjZz3LyVmj7S6CqHnCqhVV1fLLq24/X6O\nijoGsYkLfpAkfvFLwHnXfZV88+4aD+ZN7E6BYYfVURNlSXkCrZ6fKoy3/Yl+Nc+i\nO3Ligj78uIRZQgbQbI29xWSiqVBO5BIDCP7VUapnsseCfuQ+MzAeO7PTQsRiUfbQ\nub3LkGnBAgMBAAECggEABHSjygHdXSTmDeYAXz0haDbUv1gDEhLRSIEqhAwJNqrN\nYMQ2lneURtcyTE4VdqNTKev8mHrQtoBBP9h6w5JJz58ZpqsLeArClqS633WZNqqv\nT41K90dQx962qFLIP7ABj7H+FbIRAJySNRTOMwAagf5itSZrHQltXhSwGGrRkRnK\nMdQMBYJdxtkvMd6maMDUII8687iwgpwU24m+cR3Mh5ogAAm4b8lhocXcN7+w6wAW\nK3FXD13GW/cER0n5h1IInoLvTVrrHAXYJsKpbYs2iOjW8fMZ0otC5oEErEgiWLbV\n3jUPCyJfHCh+Gdrn0zSYyl4Og24XFQD69kpKqy4AsQKBgQDn60UMababJkgaTip6\ndpaxIE2w75JALtE0aFcrz13lT4uf/5JRMt1972LvY0ab27xshIfsbzQqs4vcn2K9\n3e0blCm61h3YMfdzaDRb/v2zIMTWdkr36al6t8GKa1mWMCBgaxIYW1KHjHPUH4LD\nAZ4+CdM2ARwPLcvf69h/xxm6UQKBgQDCdZbt7KeImx4tOyTFVY/3pjCPZkeS1wYF\nidkiQehTswtpR7UnspiJEsK+LTptlFJPeWh5tSaBJdf62ZelPAtIFjiS5tl41qRS\n9pMGXsBt6rOKPh5LC2QNQioC4orAwXZGmxf19Wt9KasKYjinULDcp/u+Mm5KZJM4\n76Hl0ytscQKBgAqGNKXxjiXQQOlgrrDL/N6g1qW22W4sMbYtHfeQ+3PSfkWOdXdV\n1ZNHb7fpS2T7Pbu27+wcx8NATpJ+cR6omX/s40/lM4mCCvajveyGz8B3Njd9Or2x\nTs2Q1SmQ4YndOTrm4PVV/5LDHuZ7X5W11xZ9n6YNutY9f8jzjOmPgW1hAoGBAK1f\n5/wjVk+OdX5AUA18tspHKt5/g2rhOWYwvB42Auy1IoRwQYyuSB9WUbj7XC+c4TIo\nfcSdhUH6OrFV1UWl3i0cWr5nAhghzwqE+xrf2dNmQUMNFTc1ZbQIfKprzugC1PAo\nkVliwb4rK2srnXVXlQh24RV3oyvCthw6Uu80sm+RAoGAe9s4Kzb6a0lN0Fn4lojE\nuH083lsGAA/zFiKaAQIKUtm3HOoTH15aBG7TmsGLcHlIW7yRxee2O5xq7ww4jqNr\nTEjOmzNBtrEUPIBchRPFVJMaEEAqrOv/QMGMqRmVIHMU6fblVHTojacQJmeRyvKx\nl0tlCWJpESn6CFZwjGYs//g=\n-----END PRIVATE KEY-----\n',
+  client_email: 'chatbot-testing@chatbottesting-oxch.iam.gserviceaccount.com',
+  client_id: '104401065870967461276',
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_x509_cert_url:
+    'https://www.googleapis.com/robot/v1/metadata/x509/chatbot-testing%40chatbottesting-oxch.iam.gserviceaccount.com',
+};

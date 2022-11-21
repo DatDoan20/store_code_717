@@ -10,13 +10,20 @@
 
 import React from 'react';
 
-import {LogBox} from 'react-native';
+import { LogBox, StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
 LogBox.ignoreAllLogs();
 
-import {AppNavigator} from './navigators';
+import { AppNavigator } from './navigators';
 
 const App = () => {
-  return <AppNavigator />;
+  return (
+    <SafeAreaProvider>
+      <StatusBar hidden />
+      <AppNavigator />
+    </SafeAreaProvider>
+  )
 };
 export default App;

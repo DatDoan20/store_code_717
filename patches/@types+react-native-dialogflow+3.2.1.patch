@@ -1,0 +1,43 @@
+diff --git a/node_modules/@types/react-native-dialogflow/index.d.ts b/node_modules/@types/react-native-dialogflow/index.d.ts
+index 59ebff7..2a1301d 100644
+--- a/node_modules/@types/react-native-dialogflow/index.d.ts
++++ b/node_modules/@types/react-native-dialogflow/index.d.ts
+@@ -3,6 +3,38 @@
+ // Definitions by: Jason Merino <https://github.com/jasonmerino>
+ // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+ // TypeScript Version: 2.8
++export interface Parameters {
++
++}
++
++export interface Intent {
++    displayName: string,
++    name: string,
++    isFallback?: boolean
++}
++
++export interface FulfillmentMessages {
++    text: {
++        text: string[]
++    }
++}
++
++export interface QueryResult {
++    action: string,
++    allRequiredParamsPresent: boolean,
++    fulfillmentText: string,
++    fulfillmentMessages: FulfillmentMessages[],
++    intent: Intent,
++    intentDetectionConfidence: number,
++    languageCode: string,
++    parameters: Parameters | {},
++    queryText: string
++ }
++
++export interface RequestQueryResult {
++    queryResult: QueryResult,
++    responseId: string
++}
+ 
+ export namespace Dialogflow {
+     const LANG_CHINESE_CHINA = 'zh-CN';

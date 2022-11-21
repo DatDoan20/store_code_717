@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "122628850719-hj8ol4csgk0uipu817e90onjfpv243fg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.internproject",
-            "certificate_hash": "6561be2988cad02fc2702d240268a6dcb6a2290e"
-          }
-        },
-        {
           "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -58,6 +50,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "122628850719-9uejbq8oqndcfmb8j37gulud5o1n3dab.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nichietsu.storecode717",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "122628850719-1cr15cc1tt26o13t6mra9d8f9nj8ptgc.apps.googleusercontent.com",
           "client_type": 3
